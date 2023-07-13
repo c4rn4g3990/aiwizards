@@ -1,0 +1,303 @@
+Subject: **URGENT** - Production Incident in CorePay App - 01-JUL-2023
+
+---
+
+**From: Jason Bourne, Production Support Engineer, National Commerce Bank**
+
+**To: Linda Reed, Production Support Manager, National Commerce Bank**
+
+**CC: Production Support Team, National Commerce Bank**
+
+Greetings Linda,
+
+I hope you're doing well. I'm reaching out to you because today, as I was going through our system's operations in the course of my routine checks, I noticed a quite alarming anomaly. It appears that there is a sizable issue in the newly implemented CorePay application. It seems the processing of payments has taken quite a hit, in a negative way I must clarify. We are getting an influx of messages from our customers, all revolving around one point: their transactions have been halted due to an unspecified cause, all happening post the new update. We have, as of now, started an examination of the source of the problem.
+
+Kind Regards,
+Jason
+
+---
+
+**From: Linda Reed, Production Support Manager, National Commerce Bank**
+
+**To: Jason Bourne, Production Support Engineer, National Commerce Bank**
+
+**CC: Production Support Team, National Commerce Bank; Kevin Murray, Application Development Manager, National Commerce Bank**
+
+Hello Jason,
+
+Thank you for your insightful yet worrying email. Your observations have set off alarm bells in my head, and it seems we might be staring down at a very challenging problem. A potential bug in the latest update of CorePay you say? This indeed spells out a lot of unforeseen trouble. I will promptly alert Kevin and his team and ask them to dissect the changes that were ushered in with the last release.
+
+Best,
+Linda
+
+---
+
+**From: Kevin Murray, Application Development Manager, National Commerce Bank**
+
+**To: Linda Reed, Production Support Manager, National Commerce Bank**
+
+**CC: Jason Bourne, Production Support Engineer, National Commerce Bank; CorePay Development Team, National Commerce Bank**
+
+Linda,
+
+I acknowledge your request and fully comprehend the magnitude of the issue at hand. As such, I have mobilized my team and we have embarked on a vigorous examination of the intricate network of code changes that were part of the last release. We are leaving no stone unturned in our quest to isolate the potential point of failure.
+
+Best,
+Kevin
+
+---
+
+**From: Neil Patel, Application Developer, National Commerce Bank**
+
+**To: Kevin Murray, Application Development Manager, National Commerce Bank**
+
+**CC: CorePay Development Team, National Commerce Bank**
+
+Dear Kevin,
+
+In the ongoing exploratory voyage into the labyrinth of the CorePay's code changes, we have stumbled upon an unusual change that pertains to payment validations. There is a non-zero chance that this alteration might be the Achilles' heel, and therefore, we are furiously working to confirm if this truly is the cause.
+
+Best,
+Neil
+
+---
+
+**From: Kevin Murray, Application Development Manager, National Commerce Bank**
+
+**To: Linda Reed, Production Support Manager, National Commerce Bank**
+
+**CC: Jason Bourne, Production Support Engineer, National Commerce Bank; CorePay Development Team, National Commerce Bank; Neil Patel, Application Developer, National Commerce Bank**
+
+Dear Linda,
+
+The good news is, Neil and his team have potentially identified the culprit behind our troubles. I reiterate, potentially. We are still in the process of affirming this, and I assure you, we are burning the midnight oil to provide you with updates as quickly as humanly possible.
+
+Best,
+Kevin
+
+---
+
+**From: Linda Reed, Production Support Manager, National Commerce Bank**
+
+**To: John Clarkson, VP of IT, National Commerce Bank**
+
+**CC: Kevin Murray, Application Development Manager, National Commerce Bank; Jason Bourne, Production Support Engineer, National Commerce Bank**
+
+John,
+
+I must bring
+
+ to your attention an issue of critical importance. The recent release of CorePay, our pride and joy, is showing severe signs of malfunction, thus negatively impacting its payment processing capabilities. Our team, in collaboration with Kevin's development team, are employing all resources at their disposal to isolate and rectify the issue. The current status is under investigation, and I shall keep you posted with all the developments as they unfurl.
+
+Best,
+Linda
+
+---
+
+**From: John Clarkson, VP of IT, National Commerce Bank**
+
+**To: Linda Reed, Production Support Manager, National Commerce Bank**
+
+**CC: Kevin Murray, Application Development Manager, National Commerce Bank; Jason Bourne, Production Support Engineer, National Commerce Bank**
+
+Linda,
+
+I appreciate your prompt and detailed update on the incident. I understand the seriousness and urgency of the situation and trust in your teams' capabilities to get this resolved swiftly. Please ensure all necessary actions are taken and keep me in the loop with further developments.
+
+Best,
+John
+
+---
+
+**From: Neil Patel, Application Developer, National Commerce Bank**
+
+**To: Kevin Murray, Application Development Manager, National Commerce Bank**
+
+**CC: CorePay Development Team, National Commerce Bank**
+
+Dear Kevin,
+
+Our fears have been confirmed. The unusual change we spotted is indeed the root cause of the issue. However, the silver lining in this ordeal is that we have already embarked on the creation of a fix that would hopefully rectify this situation. We anticipate a window of 3 hours to complete this task.
+
+Best,
+Neil
+
+---
+
+**From: Kevin Murray, Application Development Manager, National Commerce Bank**
+
+**To: Linda Reed, Production Support Manager, National Commerce Bank**
+
+**CC: Jason Bourne, Production Support Engineer, National Commerce Bank; CorePay Development Team, National Commerce Bank; Neil Patel, Application Developer, National Commerce Bank**
+
+Linda,
+
+I am writing this with a heavy heart. Our initial suspicions turned out to be correct and we have now confirmed the presence of a bug in our latest release. Despite this setback, I am glad to inform you that the fix is already in progress and our preliminary estimates suggest a duration of 3 hours for completion.
+
+Best,
+Kevin
+
+---
+
+**From: Linda Reed, Production Support Manager, National Commerce Bank**
+
+**To: John Clarkson, VP of IT, National Commerce Bank**
+
+**CC: Kevin Murray, Application Development Manager, National Commerce Bank; Jason Bourne, Production Support Engineer, National Commerce Bank**
+
+John,
+
+The situation has evolved significantly since my last update. I regret to inform you that the anomaly in our CorePay application has been confirmed as a bug. However, Kevin's team has acted swiftly and embarked on the development of a fix, which they estimate will be ready in 3 hours. I will be closely tracking their progress and will keep you updated.
+
+Best,
+Linda
+
+---
+
+**From: John Clarkson, VP of IT, National Commerce Bank**
+
+**To: Linda Reed, Production Support Manager, National Commerce Bank**
+
+**CC: Kevin Murray, Application Development Manager, National Commerce Bank; Jason Bourne, Production Support Engineer, National Commerce Bank**
+
+Thanks for the comprehensive update, Linda. The swift actions taken by all teams involved is commendable. Let's work together to get this situation under control as quickly as possible.
+
+Best,
+John
+
+---
+
+**From: Neil Patel, Application Developer, National Commerce Bank**
+
+**To: Kevin Murray, Application Development Manager, National Commerce Bank**
+
+**CC: CorePay Development Team, National Commerce Bank**
+
+Dear Kevin,
+
+We have triumphed in our quest for a solution. The fix for the bug is ready for testing.
+
+Best,
+Neil
+
+---
+
+**From: Kevin Murray, Application Development Manager, National Commerce Bank**
+
+**To: Linda Reed, Production Support Manager, National Commerce Bank**
+
+**CC
+
+: Jason Bourne, Production Support Engineer, National Commerce Bank; CorePay Development Team, National Commerce Bank; Neil Patel, Application Developer, National Commerce Bank**
+
+Linda,
+
+We have a promising update! The fix is ready for testing and I would like to engage the testing team to ensure it is robust and free from defects.
+
+Best,
+Kevin
+
+---
+
+**From: Linda Reed, Production Support Manager, National Commerce Bank**
+
+**To: Melissa Turner, Testing Manager, National Commerce Bank**
+
+**CC: Kevin Murray, Application Development Manager, National Commerce Bank; Jason Bourne, Production Support Engineer, National Commerce Bank**
+
+Melissa,
+
+Our developers have devised a fix for the ongoing issue with our CorePay application. It requires your team's expertise in testing to ensure its effectiveness.
+
+Best,
+Linda
+
+---
+
+**From: Melissa Turner, Testing Manager, National Commerce Bank**
+
+**To: Linda Reed, Production Support Manager, National Commerce Bank**
+
+**CC: Kevin Murray, Application Development Manager, National Commerce Bank; Jason Bourne, Production Support Engineer, National Commerce Bank**
+
+Linda,
+
+The testing team has taken up the task of testing the fix and we are working tirelessly to expedite the process.
+
+Best,
+Melissa
+
+---
+
+**From: Melissa Turner, Testing Manager, National Commerce Bank**
+
+**To: Linda Reed, Production Support Manager, National Commerce Bank**
+
+**CC: Kevin Murray, Application Development Manager, National Commerce Bank; Jason Bourne, Production Support Engineer, National Commerce Bank**
+
+Linda,
+
+Our diligent efforts in testing have paid off, and the fix has passed our rigorous testing protocols. You have our green signal to proceed with the deployment.
+
+Best,
+Melissa
+
+---
+
+**From: Linda Reed, Production Support Manager, National Commerce Bank**
+
+**To: Jason Bourne, Production Support Engineer, National Commerce Bank**
+
+**CC: Kevin Murray, Application Development Manager, National Commerce Bank**
+
+Jason,
+
+It's a moment of relief as the fix has passed testing and we are ready to deploy. Please proceed with the necessary steps to deploy the fix.
+
+Best,
+Linda
+
+---
+
+**From: Jason Bourne, Production Support Engineer, National Commerce Bank**
+
+**To: Linda Reed, Production Support Manager, National Commerce Bank**
+
+**CC: Kevin Murray, Application Development Manager, National Commerce Bank**
+
+Linda,
+
+The fix has been successfully deployed and the early results are promising. We shall continue our close monitoring to ensure the issue is completely resolved.
+
+Best,
+Jason
+
+---
+
+**From: Linda Reed, Production Support Manager, National Commerce Bank**
+
+**To: John Clarkson, VP of IT, National Commerce Bank**
+
+**CC: Kevin Murray, Application Development Manager, National Commerce Bank; Jason Bourne, Production Support Engineer, National Commerce Bank**
+
+John,
+
+I am pleased to report that the fix has been successfully deployed and initial results are positive. We are still closely observing the system to ensure the resolution of the issue.
+
+Best,
+Linda
+
+---
+
+**From: John Clarkson, VP of IT, National Commerce Bank**
+
+**To: Linda Reed, Production Support Manager, National Commerce Bank**
+
+**CC: Kevin Murray, Application Development Manager, National Commerce Bank; Jason Bourne, Production Support Engineer, National Commerce Bank**
+
+Linda,
+
+Thank you for all your efforts and the detailed updates throughout this process. I appreciate the dedication shown by all the teams involved. Let's continue to monitor the situation closely.
+
+Best,
+John

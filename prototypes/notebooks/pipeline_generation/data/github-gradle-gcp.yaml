@@ -1,0 +1,81 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  GRADLE_HOME: Gradle
+  DOCKER_CREDENTIALS_ID: your-docker-credentials
+  DOCKER_IMAGE: your-docker-image-name
+  GCP_PROJECT_DEV: your-gcp-project-dev
+  GCP_PROJECT_PROD: your-gcp-project-prod
+  GCP_APP_NAME: your-app-name
+  GCR_HOST: gcr.io
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check-out
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+
+      - name: Setup Gradle
+        uses: gradle/wrapper-validation-action@v1
+
+      - name: Build and Unit tests
+        run: ${{ env.GRADLE_HOME }}/bin/gradle test
+
+      - name: Linters
+        run: ${{ env.GRADLE_HOME }}/bin/gradle checkstyleMain
+
+      - name: SonarQube Analysis
+        uses: sonarsource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Jacoco
+        run: ${{ env.GRADLE_HOME }}/bin/gradle jacocoTestReport
+
+      - name: Dependency scan and update
+        run: |
+          dependencyMagic scan --project-path .
+          dependencyMagic update --project-path .
+
+      - name: Build Docker Image
+        run: |
+          docker build -t ${DOCKER_IMAGE}:${GITHUB_RUN_NUMBER} .
+          echo "${DOCKER_CREDENTIALS_ID}" | docker login your-docker-registry.com --username ${{ secrets.DOCKER_USERNAME }} --password-stdin
+          docker push ${DOCKER_IMAGE}:${GITHUB_RUN_NUMBER}
+
+      - name: Push Docker Image to GCR
+        run: |
+          echo "${DOCKER_CREDENTIALS_ID}" | docker login gcr.io --username _json_key --password-stdin
+          docker tag ${DOCKER_IMAGE}:${GITHUB_RUN_NUMBER} ${GCR_HOST}/${GCP_PROJECT_DEV}/${DOCKER_IMAGE}:${GITHUB_RUN_NUMBER}
+          docker push ${GCR_HOST}/${GCP_PROJECT_DEV}/${DOCKER_IMAGE}:${GITHUB_RUN_NUMBER}
+
+      - name: Deploy to GCP Development Environment
+        run: |
+          gcloud run deploy ${GCP_APP_NAME} --image ${GCR_HOST}/${GCP_PROJECT_DEV}/${DOCKER_IMAGE}:${GITHUB_RUN_NUMBER} --platform managed --region us-central1 --allow-unauthenticated
+
+      - name: Integration Tests
+        run: ${{ env.GRADLE_HOME }}/bin/gradle integrationTest
+
+      - name: Performance Tests
+        run: jmeter -n -t test_plan.jmx -l result.jtl
+
+      - name: Clean Workspace
+        if: always()
+        uses: actions/github-script@v3
+        with:
+          script: |
+            const fs = require('fs');
+            fs.rmdirSync(process.env.GITHUB_WORKSPACE, { recursive: true });

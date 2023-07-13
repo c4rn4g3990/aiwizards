@@ -1,0 +1,92 @@
+pipeline {
+    agent any
+
+    environment {
+        GCP_PROJECT = 'test-project' // Replace with your GCP project name
+        GCP_SERVICE_ACCOUNT_KEY = credentials('gcp-key') // Replace with your Jenkins credentials ID for GCP service account key
+        GCP_APP_NAME = 'my-app' // Replace with your GCP App Engine application name
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'npm install'
+                sh 'npm run build'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'npm test'
+            }
+        }
+
+        stage('Static Code Analysis') {
+            steps {
+                sh 'npm run eslint' // Replace with your ESLint command
+            }
+        }
+
+        stage('Code Quality') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh 'npm run sonar-scanner' // Replace with your SonarQube scanner command
+                }
+            }
+        }
+
+        stage('Integration Test') {
+            steps {
+                sh 'npm run integration-test'
+            }
+        }
+
+        stage('Code Coverage') {
+            steps {
+                sh 'npm run code-coverage'
+                publishHTML(target: [reportDir: 'coverage', reportFiles: 'index.html', reportName: 'Code Coverage'])
+            }
+        }
+
+        stage('Package Artifacts') {
+            steps {
+                sh 'npm run package'
+                archiveArtifacts artifacts: 'path/to/package/**', fingerprint: true
+            }
+        }
+
+        stage('Archive Artifacts') {
+            steps {
+                archiveArtifacts artifacts: 'path/to/artifacts/**', fingerprint: true
+            }
+        }
+
+        stage('Deploy to GCP') {
+            when {
+                branch 'deployment-branch' // Replace with the branch you want to deploy from
+            }
+            steps {
+                withCredentials([file(credentialsId: 'gcp-key', variable: 'GCP_KEY_FILE')]) {
+                    sh 'gcloud auth activate-service-account --key-file=$GCP_KEY_FILE'
+                    sh 'gcloud config set project $GCP_PROJECT'
+                    sh 'gcloud app deploy --version=$BUILD_NUMBER --quiet'
+                }
+            }
+        }
+
+        stage('Notify') {
+            steps {
+                emailext body: 'The build is complete. Please check the results.',
+                    subject: 'Pipeline Notification',
+                    to: 'your-email@example.com',
+                    attachLog: true
+            }
+        }
+    }
+}

@@ -1,0 +1,5 @@
+Please generate the CI/CD pipeline base on the example I provide below. Make sure that this pipeline is correct and follows the best DevOps practices.
+I want your response to be easily parseable programmatically, so make sure that the pipeline content is correctly formatted.
+I also want you to ask me up to 3 additional questions that I could answer for you to improve the pipeline or fill in the missing values. Please separate your questions from the pipeline by delimiter ###### Questions
+Example of the pipeline I want you to generate:
+"{example}"

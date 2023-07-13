@@ -1,0 +1,6 @@
+Please review a CI/CD pipeline and suggest improvements. Also, try to see if any commands in stages can be optimized.
+Provide your output as a numbered list.
+Provide not more than 10 items but there can be less. Do not put any useless suggestions into the list.
+There should be just a list, nothing else, it should be easily parseable.
+Pipeline I'd like you to review:
+"{pipeline}"

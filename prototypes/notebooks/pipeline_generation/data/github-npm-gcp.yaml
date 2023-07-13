@@ -1,0 +1,79 @@
+name: CI/CD Pipeline
+
+on: [push]
+
+env:
+  DOCKER_IMAGE: 'your-docker-image-name'
+  GCP_PROJECT_DEV: 'your-gcp-project-dev'
+  GCP_PROJECT_PROD: 'your-gcp-project-prod'
+  GCP_APP_NAME: 'your-app-name'
+  GCR_HOST: 'gcr.io'
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Linters
+        run: npm run lint
+
+      - name: Run Unit Tests
+        run: npm test
+
+      - name: Audit Dependencies
+        run: npm audit
+
+      - name: Update Dependencies
+        run: npm update
+
+      - name: Build Docker Image
+        run: docker build . -t ${{ env.DOCKER_IMAGE }}:${{ github.run_number }}
+
+      - name: Log into GCR
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.GCR_HOST }}
+          username: _json_key
+          password: ${{ secrets.GCR_JSON_KEY }}
+
+      - name: Push Docker Image to GCR
+        run: |
+          docker tag ${{ env.DOCKER_IMAGE }}:${{ github.run_number }} ${{ env.GCR_HOST }}/${{ env.GCP_PROJECT_DEV }}/${{ env.DOCKER_IMAGE }}:${{ github.run_number }}
+          docker push ${{ env.GCR_HOST }}/${{ env.GCP_PROJECT_DEV }}/${{ env.DOCKER_IMAGE }}:${{ github.run_number }}
+
+      - name: Deploy to GCP Development Environment
+        run: |
+          gcloud config set project ${{ env.GCP_PROJECT_DEV }}
+          gcloud run deploy ${{ env.GCP_APP_NAME }} --image ${{ env.GCR_HOST }}/${{ env.GCP_PROJECT_DEV }}/${{ env.DOCKER_IMAGE }}:${{ github.run_number }} --platform managed --region us-central1 --allow-unauthenticated --quiet
+
+      - name: Run Integration Tests
+        run: npm run integration-test
+
+      - name: Run Performance Tests
+        run: npm run performance-test
+
+      - name: Promote to GCP Production Environment
+        run: |
+          docker tag ${{ env.DOCKER_IMAGE }}:${{ github.run_number }} ${{ env.GCR_HOST }}/${{ env.GCP_PROJECT_PROD }}/${{ env.DOCKER_IMAGE }}:${{ github.run_number }}
+          docker push ${{ env.GCR_HOST }}/${{ env.GCP_PROJECT_PROD }}/${{ env.DOCKER_IMAGE }}:${{ github.run_number }}
+          gcloud config set project ${{ env.GCP_PROJECT_PROD }}
+          gcloud run deploy ${{ env.GCP_APP_NAME }} --image ${{ env.GCR_HOST }}/${{ env.GCP_PROJECT_PROD }}/${{ env.DOCKER_IMAGE }}:${{ github.run_number }} --platform managed --region us-central1 --allow-unauthenticated --quiet
+
+      - name: Clean Workspace
+        if: always()
+        uses: actions/github-script@v3
+        with:
+          script: |
+            const fs = require('fs');
+            fs.rmdirSync(process.env.GITHUB_WORKSPACE, { recursive: true });

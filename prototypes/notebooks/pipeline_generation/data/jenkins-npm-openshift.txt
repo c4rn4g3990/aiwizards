@@ -1,0 +1,156 @@
+pipeline {
+    agent any
+    environment {
+        GRADLE_HOME = tool 'Gradle'
+        DOCKER_CREDENTIALS_ID = 'your-docker-credentials'
+        DOCKER_IMAGE = 'your-docker-image-name'
+        OPENSHIFT_PROJECT_DEV = 'your-openshift-project-dev'
+        OPENSHIFT_PROJECT_PROD = 'your-openshift-project-prod'
+        OPENSHIFT_APP_NAME = 'your-app-name'
+    }
+    stages {
+        stage('Check-out') {
+            steps {
+                git credentialsId: 'your-git-credentials', url: 'https://github.com/your/repo.git', branch: 'master'
+            }
+        }
+        stage('Build and Unit tests') {
+            steps {
+                sh "${GRADLE_HOME}/bin/gradle test"
+            }
+            post {
+                always {
+                    junit '**/build/test-results/**/*.xml'
+                }
+            }
+        }
+        stage('Linters') {
+            steps {
+                // replace with your specific linter
+                sh "${GRADLE_HOME}/bin/gradle checkstyleMain checkstyleTest"
+            }
+            post {
+                failure {
+                    notifyFailureToPullRequest('Linters stage failed.')
+                }
+            }
+        }
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh "${GRADLE_HOME}/bin/gradle sonarqube"
+                }
+            }
+            post {
+                failure {
+                    notifyFailureToPullRequest('SonarQube Analysis stage failed.')
+                }
+            }
+        }
+        stage('Jacoco') {
+            steps {
+                sh "${GRADLE_HOME}/bin/gradle jacocoTestReport"
+                jacoco(execPattern: '**/build/jacoco/test.exec')
+            }
+            post {
+                failure {
+                    notifyFailureToPullRequest('Jacoco stage failed.')
+                }
+            }
+        }
+        stage('Dependency scan and update') {
+            steps {
+                sh 'dependencyMagic scan --project-path .'
+                sh 'dependencyMagic update --project-path .'
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    def dockerImage = docker.build("${DOCKER_IMAGE}:${env.BUILD_NUMBER}")
+                    docker.withRegistry('https://your-docker-registry.com', "${DOCKER_CREDENTIALS_ID}") {
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
+        stage('Deploy to OpenShift Development Environment') {
+            steps {
+                script {
+                    openshift.withCluster() {
+                        openshift.withProject("${env.OPENSHIFT_PROJECT_DEV}") {
+                            def appName = "${env.OPENSHIFT_APP_NAME}"
+                            def imageTag = "${DOCKER_IMAGE}:${env.BUILD_NUMBER}"
+
+                            openshift.selector("dc/${appName}").exists() ? openshift.tag("--source=docker ${imageTag} --dest=istag/${appName}:latest") : openshift.newApp("${appName}", "--name=${appName}", "--image-stream=${imageTag}")
+
+                            openshift.selector("dc/${appName}").rollout().latest()
+                        }
+                    }
+                }
+            }
+        }
+        stage('Integration Tests') {
+            steps {
+                echo 'Running integration tests...'
+                // replace with your specific integration testing framework
+                sh "${GRADLE_HOME}/bin/gradle integrationTest"
+            }
+        }
+        stage('Performance Tests') {
+            steps {
+                echo 'Running performance tests...'
+                // replace with your specific performance testing tool
+                sh 'jmeter -n -t test_plan.jmx -l result.jtl'
+            }
+        }
+        stage('Promote to OpenShift Production Environment') {
+            when {
+                expression { input message: 'Are you sure you want to deploy to production?', submitter: 'authorized-submitter' }
+            }
+            steps {
+                script {
+                    openshift.withCluster() {
+                        openshift.withProject("${env.OPENSHIFT_PROJECT_PROD}") {
+                            def appName = "${env.OPENSHIFT_APP_NAME}"
+                            openshift.tag("--source=istag/${appName}:latest --dest=istag/${appName}:prod")
+                            openshift.selector("dc/${appName}").rollout().latest()
+                        }
+                    }
+                }
+            }
+        }
+    }
+    post {
+        always {
+            script {
+                // Check for stage failure status here. The status will be null if the stage has not failed.
+                if (currentBuild.result != 'SUCCESS') {
+                    echo 'One or more stages failed.'
+                    notifyFailureToPullRequest("Build failed at stage: ${currentBuild.currentStage}")
+                } else {
+                    echo 'All stages executed successfully.'
+                }
+            }
+            cleanWs()
+        }
+        success {
+            notifyBuildStatusToSlack('SUCCESS')
+        }
+        failure {
+            notifyBuildStatusToSlack('FAILURE')
+        }
+    }
+}
+
+def notifyFailureToPullRequest(String comment) {
+    // Implement the logic to add a comment to the pull request, notifying about the stage failure
+    // Use appropriate API or plugins to interact with your source control system (e.g., GitHub API, Jenkins GitHub Pull Request Plugin)
+    // The string parameter 'comment' contains a specific message about the failure
+}
+
+def notifyBuildStatusToSlack(status) {
+    // Implement the logic to send build status notifications to Slack or any other messaging platform
+    // Use Slack API, Jenkins Slack Plugin, or any other relevant integration
+    // Send a message with the build status (success or failure) to the desired channel or recipient
+}

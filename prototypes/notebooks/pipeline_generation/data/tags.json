@@ -1,0 +1,14 @@
+{
+    "github-gradle-gcp.yaml": ["gradle", "gcp", "github"],
+    "github-gradle-openshift.yaml": ["gradle", "openshift", "github"],
+    "github-maven-gcp.yaml": ["maven", "gcp", "github"],
+    "github-maven-openshift.yaml": ["maven", "openshift", "github"],
+    "github-npm-gcp.yaml": ["npm", "gcp", "github"],
+    "github-npm-openshift.yaml": ["npm", "openshift", "github"],
+    "jenkins-gradle-gcp.txt": ["gradle", "gcp", "jenkins"],
+    "jenkins-gradle-openshift.txt": ["gradle", "openshift", "jenkins"],
+    "jenkins-maven-gcp.txt": ["maven", "gcp", "jenkins"],
+    "jenkins-maven-openshift.txt": ["maven", "openshift", "jenkins"],
+    "jenkins-npm-gcp.txt": ["npm", "gcp", "jenkins"],
+    "jenkins-npm-openshift.txt": ["npm", "openshift", "jenkins"]
+}

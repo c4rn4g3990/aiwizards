@@ -1,0 +1,43 @@
+**Incident Report**
+
+**Incident ID:** INC20230701CP001
+**Created By:** Jason Bourne
+**Created On:** 2023-07-01 08:32 AM
+
+**Incident State:** Resolved
+**Closed On:** 2023-07-01 03:05 PM
+**Closed By:** Jason Bourne
+
+**Incident Short Description:** Production incident in CorePay application impacting payment processing
+
+**Application/Module:** CorePay
+**Priority:** Critical
+**Affected Users:** All users making payments through CorePay
+
+**Incident Description:**
+A major incident was observed in the CorePay application on 1st July 2023, affecting payment processing functionality. Several customers reported failed transactions.
+
+**Root Cause Analysis:**
+The production support team and application development team conducted a joint investigation. The issue was identified as a defect in the latest release of the CorePay application, specifically, a bug in the payment validation process.
+
+**Action Taken:**
+1. The development team isolated the defective code and began working on a fix.
+2. The fix was developed, tested, and deployed within approximately 6 hours of incident identification.
+3. Post-deployment, the production support team monitored the situation closely to ensure the issue was resolved.
+
+**Incident Impact:**
+1. Payment processing was temporarily unavailable for CorePay users, affecting customer transactions.
+2. Customer trust and satisfaction levels may have been negatively affected due to the incident.
+
+**Preventive Measures:**
+1. Strengthen the code review and testing process for future releases.
+2. Enhance the monitoring of application health post-deployment to identify any potential issues faster.
+3. Implement a rollback strategy for major releases.
+
+**Attachments:**
+- Logs showing the incident
+- Bug reports and fix details
+- Communication thread during the incident
+
+**Resolution Notes:**
+The defect in the CorePay application was fixed, and the fix was deployed successfully. Payment processing functionality was restored, and no further issues have been reported. The production support team will continue to monitor the situation closely.

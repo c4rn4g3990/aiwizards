@@ -1,0 +1,92 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  MAVEN_HOME: /usr/share/maven
+  DOCKER_IMAGE: 'your-docker-image-name'
+  GCP_PROJECT_DEV: 'your-gcp-project-dev'
+  GCP_PROJECT_PROD: 'your-gcp-project-prod'
+  GCP_APP_NAME: 'your-app-name'
+  GCR_HOST: 'gcr.io'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: 11
+
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Build and Run Unit tests
+        run: mvn verify
+
+      - name: Run Linters
+        run: mvn checkstyle:check
+
+      - name: SonarQube Analysis
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Jacoco
+        run: mvn jacoco:report
+
+      - name: Dependency scan and update
+        run: |
+          dependencyMagic scan --project-path .
+          dependencyMagic update --project-path .
+
+      - name: Build Docker Image
+        run: |
+          docker build -t $DOCKER_IMAGE:$GITHUB_RUN_ID .
+          echo DOCKER_PASSWORD | docker login your-docker-registry.com -u DOCKER_USERNAME --password-stdin
+          docker push $DOCKER_IMAGE:$GITHUB_RUN_ID
+
+      - name: Push Docker Image to GCR
+        run: |
+          echo GCR_PASSWORD | docker login $GCR_HOST -u GCR_USERNAME --password-stdin
+          docker tag $DOCKER_IMAGE:$GITHUB_RUN_ID $GCR_HOST/$GCP_PROJECT_DEV/$DOCKER_IMAGE:$GITHUB_RUN_ID
+          docker push $GCR_HOST/$GCP_PROJECT_DEV/$DOCKER_IMAGE:$GITHUB_RUN_ID
+
+      - name: Deploy to GCP Development Environment
+        run: |
+          # Set up your GCP SDK and gcloud authentication here
+          gcloud run deploy $GCP_APP_NAME --image $GCR_HOST/$GCP_PROJECT_DEV/$DOCKER_IMAGE:$GITHUB_RUN_ID --platform managed --region us-central1 --allow-unauthenticated
+
+      - name: Integration Tests
+        run: mvn integration-test
+
+      - name: Performance Tests
+        run: jmeter -n -t test_plan.jmx -l result.jtl
+
+      - name: Promote to GCP Production Environment
+        run: |
+          # This job needs to be manually triggered, to achieve this we can split this job in a new workflow and use workflow_run event.
+          docker tag $DOCKER_IMAGE:$GITHUB_RUN_ID $GCR_HOST/$GCP_PROJECT_PROD/$DOCKER_IMAGE:$GITHUB_RUN_ID
+          docker push $GCR_HOST/$GCP_PROJECT_PROD/$DOCKER_IMAGE:$GITHUB_RUN_ID
+          gcloud run deploy $GCP_APP_NAME --image $GCR_HOST/$GCP_PROJECT_PROD/$DOCKER_IMAGE:$GITHUB_RUN_ID --platform managed --region us-central1 --allow-unauthenticated
+
+      - name: Clean Workspace
+        if: always()
+        uses: actions/github-script@v3
+        with:
+          script: |
+            const fs = require('fs');
+            fs.rmdirSync(process.env.GITHUB_WORKSPACE, { recursive: true });

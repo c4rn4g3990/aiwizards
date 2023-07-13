@@ -1,7 +1,7 @@
 import React from "react";
 import { LoadState } from "./loadState";
 
-const bakendURL = 'http://localhost:3000/aiwizards';
+const bakendURL = 'http://backend:3000/aiwizards';
 
 export function useSendToAI(): [LoadState | undefined, string | undefined, (userPrompt: string) => Promise<any>] {
     const [loadState, setLoadState] = React.useState<LoadState>();
